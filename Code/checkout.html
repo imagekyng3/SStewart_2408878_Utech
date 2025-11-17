@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Apex Technologies</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="sitename">
+                <h2><a href="../index.html">APEX</a></h2>
+                <div class="subtitle">TECHNOLOGY SHOP</div>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="products.html">Shop Now</a></li>
+                    <li><a href="about.html">Contact</a></li>
+                    <li id="loginNavItem" style="display: none;"><a href="../Auth/login.html">Login</a></li>
+                    <li id="logoutNavItem" style="display: none;"><a href="#" onclick="handleLogout(); return false;">Logout</a></li>
+                </ul>
+            </nav>
+            <img src="../images/menu.png" class="menu-icon" onclick="menutoggle()" alt="Menu">
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="container">
+            <h1 class="section-title">Checkout</h1>
+            
+            <div class="checkout-container">
+                <div class="checkout-form-container">
+                    <h2>Shipping Details</h2>
+                    <form id="checkoutForm" class="checkout-form">
+                        <div class="form-group">
+                            <label for="shippingName">Full Name</label>
+                            <input type="text" id="shippingName" name="shippingName" placeholder="Enter your full name" required>
+                            <span class="error-message" id="shippingNameError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="shippingAddress">Address</label>
+                            <input type="text" id="shippingAddress" name="shippingAddress" placeholder="Enter your address" required>
+                            <span class="error-message" id="shippingAddressError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="shippingCity">City</label>
+                            <input type="text" id="shippingCity" name="shippingCity" placeholder="Enter your city" required>
+                            <span class="error-message" id="shippingCityError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="shippingPostal">Postal Code</label>
+                            <input type="text" id="shippingPostal" name="shippingPostal" placeholder="Enter postal code" required>
+                            <span class="error-message" id="shippingPostalError"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paymentAmount">Amount Being Paid</label>
+                            <input type="number" id="paymentAmount" name="paymentAmount" step="0.01" placeholder="0.00" required>
+                            <span class="error-message" id="paymentAmountError"></span>
+                        </div>
+                        
+                        <div class="checkout-actions">
+                            <button type="submit" class="btn btn-primary" id="confirmBtn">Confirm Order</button>
+                            <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="checkout-summary">
+                    <h2>Order Summary</h2>
+                    <div id="checkoutItems" class="checkout-items-list">
+                        <!-- Cart items will be displayed here -->
+                    </div>
+                    
+                    <div class="checkout-totals">
+                        <div class="summary-item">
+                            <span>Subtotal:</span>
+                            <span id="checkoutSubtotal">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Discount (10%):</span>
+                            <span id="checkoutDiscount">$0.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Tax (15%):</span>
+                            <span id="checkoutTax">$0.00</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total:</span>
+                            <span id="checkoutTotal">$0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="checkout-actions-summary">
+                        <button class="btn btn-secondary" id="clearAllBtn">Clear All</button>
+                        <button class="btn btn-outline" id="closeCheckoutBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const loginNavItem = document.getElementById('loginNavItem');
+            const logoutNavItem = document.getElementById('logoutNavItem');
+            
+            if (isLoggedIn) {
+                if (loginNavItem) loginNavItem.style.display = 'none';
+                if (logoutNavItem) logoutNavItem.style.display = 'block';
+            } else {
+                if (loginNavItem) loginNavItem.style.display = 'block';
+                if (logoutNavItem) logoutNavItem.style.display = 'none';
+            }
+        }
+        
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('username');
+                alert('You have been logged out successfully!');
+                checkLoginStatus();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Apex Technologies</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="sitename">
+                <h2><a href="../index.html">APEX</a></h2>
+                <div class="subtitle">TECHNOLOGY SHOP</div>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="products.html">Shop Now</a></li>
+                    <li><a href="about.html">Contact</a></li>
+                    <li id="loginNavItem" style="display: none;"><a href="../Auth/login.html">Login</a></li>
+                    <li id="logoutNavItem" style="display: none;"><a href="#" onclick="handleLogout(); return false;">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="cart-icon-container">
+                <a href="cart.html" class="cart-link">
+                    <div class="cart-icon"></div>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+            </div>
+            <img src="../images/menu.png" class="menu-icon" onclick="menutoggle()" alt="Menu">
+        </div>
+    </header>
+
+    <section class="cart-section">
+        <div class="container">
+            <h1 class="section-title">Shopping Cart</h1>
+            
+            <div class="cart-container">
+                <div class="cart-items" id="cartItems">
+                    <p class="empty-cart-message">Your cart is empty. <a href="products.html">Continue shopping</a></p>
+                </div>
+                
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-item">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Discount (10%):</span>
+                        <span id="discount">$0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Tax (15%):</span>
+                        <span id="tax">$0.00</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                    
+                    <div class="cart-actions">
+                        <button class="btn btn-secondary" id="clearCartBtn">Clear All</button>
+                        <button class="btn btn-primary" id="checkoutBtn">Check Out</button>
+                        <button class="btn btn-outline" id="closeCartBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const loginNavItem = document.getElementById('loginNavItem');
+            const logoutNavItem = document.getElementById('logoutNavItem');
+            
+            if (isLoggedIn) {
+                if (loginNavItem) loginNavItem.style.display = 'none';
+                if (logoutNavItem) logoutNavItem.style.display = 'block';
+            } else {
+                if (loginNavItem) loginNavItem.style.display = 'block';
+                if (logoutNavItem) logoutNavItem.style.display = 'none';
+            }
+        }
+        
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('username');
+                alert('You have been logged out successfully!');
+                checkLoginStatus();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>
+
