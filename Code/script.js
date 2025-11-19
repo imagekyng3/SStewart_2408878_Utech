@@ -120,7 +120,7 @@ function validateLoginForm() {
         localStorage.setItem('userLoggedIn', 'true');
         localStorage.setItem('username', username);
         alert('Login successful! Redirecting to homepage...');
-        window.location.href = '../index.html';
+        window.location.href = '../code/index.html';
     }
 }
 
@@ -645,7 +645,7 @@ function validateCheckoutForm() {
         cart = [];
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCount();
-        window.location.href = '../index.html';
+        window.location.href = 'index.html';
     }
 }
 
