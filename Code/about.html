@@ -48,11 +48,11 @@
                         </div>
                         <div class="info-item">
                             <strong>Email:</strong>
-                            <span><a href="mailto:2408878@utech.edu.jm">2408878@utech.edu.jm</a></span>
+                            <span><a href="mailto:SANJAYSTEWART@students.utech.edu.jm">SANJAYSTEWART@students.utech.edu.jm</a></span>
                         </div>
                         <div class="info-item">
-                            <strong>Module Code:</strong>
-                            <span>COMP 2001</span>
+                            <strong>Course Name:</strong>
+                            <span>Web Programming</span>
                         </div>
                         <div class="info-item">
                             <strong>Assignment Name:</strong>
@@ -60,7 +60,7 @@
                         </div>
                         <div class="info-item">
                             <strong>Day/Time of Class:</strong>
-                            <span>Monday/Wednesday 10:00 AM - 12:00 PM</span>
+                            <span>Thursday 6pm to 8pm</span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                 <div class="about-card">
                     <h2>Contact Us</h2>
                     <p>Have questions or feedback? We'd love to hear from you!</p>
-                    <p>Send us an email at: <a href="mailto:2408878@utech.edu.jm?subject=Website Inquiry&body=Hello, I would like to inquire about...">2408878@utech.edu.jm</a></p>
+                    <p>Send us an email at: <a href="mailto:SANJAYSTEWART@students.utech.edu.jm?subject=Website Inquiry&body=Hello, I would like to inquire about...">SANJAYSTEWART@students.utech.edu.jm</a></p>
                 </div>
 
                 <div class="about-card">
@@ -104,6 +104,8 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userLoggedIn');
                 localStorage.removeItem('username');
+                localStorage.removeItem('userFullName');
+                localStorage.removeItem('userEmail');
                 alert('You have been logged out successfully!');
                 checkLoginStatus();
             }

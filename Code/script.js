@@ -117,10 +117,46 @@ function validateLoginForm() {
     }
     
     if (isValid) {
-        localStorage.setItem('userLoggedIn', 'true');
-        localStorage.setItem('username', username);
-        alert('Login successful! Redirecting to homepage...');
-        window.location.href = '../code/index.html';
+        // Get registered users from localStorage
+        const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        
+        // Check if username exists and password matches
+        let userFound = false;
+        let authenticatedUser = null;
+        
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].username === username && users[i].password === password) {
+                userFound = true;
+                authenticatedUser = users[i];
+                break;
+            }
+        }
+        
+        if (userFound && authenticatedUser) {
+            // Store login status and user info in localStorage
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('username', username);
+            localStorage.setItem('userFullName', authenticatedUser.fullName);
+            localStorage.setItem('userEmail', authenticatedUser.email);
+            
+            alert('Login successful! Welcome back, ' + authenticatedUser.fullName + '!');
+            window.location.href = '../code/index.html';
+        } else {
+            // Check if username exists but password is wrong
+            let usernameExists = false;
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].username === username) {
+                    usernameExists = true;
+                    break;
+                }
+            }
+            
+            if (usernameExists) {
+                passwordError.textContent = 'Incorrect password. Please try again.';
+            } else {
+                usernameError.textContent = 'Username not found. Please register first.';
+            }
+        }
     }
 }
 
@@ -209,8 +245,37 @@ function validateSignupForm() {
     }
     
     if (isValid) {
-        alert('Registration successful! Redirecting to login...');
-        window.location.href = 'login.html';
+        // Get existing users from localStorage
+        let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        
+        // Check if username already exists
+        let usernameExists = false;
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].username === username) {
+                usernameExists = true;
+                break;
+            }
+        }
+        
+        if (usernameExists) {
+            usernameError.textContent = 'Username already exists. Please choose another.';
+            isValid = false;
+        } else {
+            // Store user data in localStorage
+            const userData = {
+                fullName: fullName,
+                email: email,
+                username: username,
+                password: password,
+                dob: dob
+            };
+            
+            users.push(userData);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            
+            alert('Registration successful! Redirecting to login...');
+            window.location.href = 'login.html';
+        }
     }
 }
 

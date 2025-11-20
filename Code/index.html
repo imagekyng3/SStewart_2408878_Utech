@@ -120,6 +120,8 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userLoggedIn');
                 localStorage.removeItem('username');
+                localStorage.removeItem('userFullName');
+                localStorage.removeItem('userEmail');
                 alert('You have been logged out successfully!');
                 checkLoginStatus();
             }

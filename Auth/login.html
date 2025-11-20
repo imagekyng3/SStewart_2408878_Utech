@@ -81,6 +81,18 @@
 
     <script src="../code/script.js"></script>
     <script>
+        // Check if user is already logged in on page load
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            if (isLoggedIn) {
+                // Show logout tab if already logged in
+                switchTab('logout');
+            } else {
+                // Show login tab if not logged in
+                switchTab('login');
+            }
+        }
+        
         function switchTab(tab) {
             const loginTab = document.getElementById('loginTab');
             const logoutTab = document.getElementById('logoutTab');
@@ -101,11 +113,20 @@
         }
         
         function handleLogout() {
-            localStorage.removeItem('userLoggedIn');
-            localStorage.removeItem('username');
-            alert('You have been logged out successfully!');
-            window.location.href = '../code/index.html';
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userFullName');
+                localStorage.removeItem('userEmail');
+                alert('You have been logged out successfully!');
+                switchTab('login');
+            }
         }
+        
+        // Check login status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
     </script>
 </body>
 </html>
