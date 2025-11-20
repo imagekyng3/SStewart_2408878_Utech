@@ -188,6 +188,18 @@ nav ul li a:hover {
     cursor: pointer;
     width: 30px;
     height: 30px;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 5px;
+}
+
+.menu-icon span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    border-radius: 3px;
+    transition: all 0.3s ease;
 }
 
 /* Container & Layout Section */
