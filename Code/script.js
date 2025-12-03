@@ -1,7 +1,11 @@
 
 /*
  * IA#2 Group Project - Apex Technologies
- * Student: Sanjay Stewart (ID: 2408878)
+ * Group Members:
+ * - Sanjay Stewart (ID: 2408878)
+ * - Rihanna Simpson
+ * - Neila Jamieson
+ * - Stefane Allen
  * Course: Web Programming - Thursday 6-8pm
  * Assignment: E-commerce Website with LocalStorage
  */
@@ -233,7 +237,8 @@ function resetPassword() {
 
     if (updated) {
         localStorage.setItem('RegistrationData', JSON.stringify(users));
-        alert('Password updated successfully.');
+        localStorage.setItem('loginAttempts', '0');
+        alert('Password updated successfully. Login attempts have been reset.');
     } else {
         alert('No user found with that TRN.');
     }
@@ -1024,8 +1029,7 @@ function ShowUserFrequency() {
         return;
     }
 
-    const barUnit = 40; // pixels per user
-    const barImagePath = '../Asset/HeadPhones/head6-removebg-preview.png';
+    const barUnit = 20; // pixels per user
 
     genderContainer.innerHTML = '';
     ageContainer.innerHTML = '';
@@ -1035,7 +1039,7 @@ function ShowUserFrequency() {
         if (Object.prototype.hasOwnProperty.call(genderCounts, key)) {
             const count = genderCounts[key];
             const width = Math.max(count * barUnit, 5);
-            genderContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + key + ' (' + count + ')</span><img src="' + barImagePath + '" width="' + width + 'px" alt="bar"></div>';
+            genderContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + key + ' (' + count + ')</span><div class="chart-bar" style="width: ' + width + 'px;"></div></div>';
         }
     }
 
@@ -1044,7 +1048,7 @@ function ShowUserFrequency() {
         if (Object.prototype.hasOwnProperty.call(ageCounts, range)) {
             const count = ageCounts[range];
             const width = Math.max(count * barUnit, 5);
-            ageContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + range + ' (' + count + ')</span><img src="' + barImagePath + '" width="' + width + 'px" alt="bar"></div>';
+            ageContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + range + ' (' + count + ')</span><div class="chart-bar" style="width: ' + width + 'px;"></div></div>';
         }
     }
 }
@@ -1053,17 +1057,24 @@ function ShowUserFrequency() {
  * QUESTION 6 B - Show All Invoices (AllInvoices)
  * Description: Searches and displays all invoices from AllInvoices localStorage.
  * Can filter by TRN or show all invoices.
- * Results are displayed in browser console using console.log().
+ * Results are displayed on the page in a formatted table.
  */
 function ShowInvoices() {
     const trnInput = document.getElementById('invoiceSearchTrn');
     const trn = trnInput ? trnInput.value.trim() : '';
     const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+    const resultsDiv = document.getElementById('invoiceResults');
 
+    if (!resultsDiv) {
+        console.log('Results div not found');
+        return;
+    }
+
+    let filtered = [];
     if (trn === '') {
+        filtered = allInvoices;
         console.log('All invoices:', allInvoices);
     } else {
-        const filtered = [];
         for (let i = 0; i < allInvoices.length; i++) {
             if (allInvoices[i].trn === trn) {
                 filtered.push(allInvoices[i]);
@@ -1071,22 +1082,57 @@ function ShowInvoices() {
         }
         console.log('Invoices for TRN ' + trn + ':', filtered);
     }
+
+    if (filtered.length === 0) {
+        resultsDiv.innerHTML = '<div class="result-card" style="background-color: #fff3cd; border-color: #ffc107;"><div class="result-header">No Results Found</div><p>No invoices found' + (trn ? ' for TRN: ' + trn : ' in the system yet') + '.</p></div>';
+        return;
+    }
+
+    let html = '<div class="result-header">Search Results (' + filtered.length + ' invoice' + (filtered.length > 1 ? 's' : '') + ' found)</div>';
+    
+    for (let i = 0; i < filtered.length; i++) {
+        const inv = filtered[i];
+        html += '<div class="result-card">';
+        html += '<div class="result-header">' + inv.invoiceNumber + ' - ' + new Date(inv.date).toLocaleDateString() + '</div>';
+        html += '<div class="result-detail"><strong>TRN:</strong> ' + inv.trn + ' | <strong>Company:</strong> ' + inv.companyName + '</div>';
+        html += '<div class="result-detail"><strong>Shipping:</strong> ' + inv.shippingInformation.name + ', ' + inv.shippingInformation.address + ', ' + inv.shippingInformation.city + '</div>';
+        html += '<div class="result-detail"><strong>Items:</strong> ';
+        for (let j = 0; j < inv.items.length; j++) {
+            if (j > 0) html += ', ';
+            html += inv.items[j].name + ' (x' + inv.items[j].quantity + ')';
+        }
+        html += '</div>';
+        html += '<div class="result-detail"><strong>Financials:</strong> Subtotal: $' + inv.subtotal.toFixed(2) + ' | Discount: $' + inv.discount.toFixed(2) + ' | Tax: $' + inv.taxes.toFixed(2) + ' | Total: $' + inv.totalCost.toFixed(2) + ' | Paid: $' + inv.amountPaid.toFixed(2) + '</div>';
+        html += '</div>';
+    }
+    
+    resultsDiv.innerHTML = html;
 }
 
 /*
  * QUESTION 6 C - Get User Invoices from RegistrationData
  * Description: Retrieves and displays invoices for a specific user by TRN.
  * Searches RegistrationData and displays user's invoices array.
- * Results are displayed in browser console using console.log().
+ * Results are displayed on the page in a formatted table.
  */
 function GetUserInvoices() {
     const trnInput = document.getElementById('invoiceSearchTrn');
+    const resultsDiv = document.getElementById('invoiceResults');
+    
     if (!trnInput) {
         console.log('No TRN input found on this page.');
         return;
     }
 
     const trn = trnInput.value.trim();
+    
+    if (trn === '') {
+        if (resultsDiv) {
+            resultsDiv.innerHTML = '<div class="result-card" style="background-color: #fff3cd; border-color: #ffc107;"><div class="result-header">Missing Information</div><p>Please enter a TRN to search.</p></div>';
+        }
+        return;
+    }
+    
     const regData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
     let foundUser = null;
 
@@ -1099,8 +1145,40 @@ function GetUserInvoices() {
 
     if (!foundUser) {
         console.log('No user found for TRN ' + trn);
+        if (resultsDiv) {
+            resultsDiv.innerHTML = '<div class="result-card" style="background-color: #f8d7da; border-color: #dc3545;"><div class="result-header">User Not Found</div><p>No user found for TRN: ' + trn + '</p></div>';
+        }
         return;
     }
 
-    console.log('Invoices for TRN ' + trn + ' from RegistrationData:', foundUser.invoices || []);
+    const userInvoices = foundUser.invoices || [];
+    console.log('Invoices for TRN ' + trn + ' from RegistrationData:', userInvoices);
+    
+    if (!resultsDiv) {
+        return;
+    }
+    
+    if (userInvoices.length === 0) {
+        resultsDiv.innerHTML = '<div class="result-card" style="background-color: #fff3cd; border-color: #ffc107;"><div class="result-header">No Invoices Found</div><p>No invoices found for user: ' + foundUser.firstName + ' ' + foundUser.lastName + '<br>TRN: ' + trn + '</p></div>';
+        return;
+    }
+    
+    let html = '<div class="result-header">User: ' + foundUser.firstName + ' ' + foundUser.lastName + '</div><div class="result-detail">TRN: ' + trn + ' | Email: ' + foundUser.email + '</div><div class="result-header">' + userInvoices.length + ' Invoice' + (userInvoices.length > 1 ? 's' : '') + ' Found</div>';
+    
+    for (let i = 0; i < userInvoices.length; i++) {
+        const inv = userInvoices[i];
+        html += '<div class="result-card">';
+        html += '<div class="result-header">' + inv.invoiceNumber + ' - ' + new Date(inv.date).toLocaleDateString() + '</div>';
+        html += '<div class="result-detail"><strong>Shipping:</strong> ' + inv.shippingInformation.name + ', ' + inv.shippingInformation.address + ', ' + inv.shippingInformation.city + '</div>';
+        html += '<div class="result-detail"><strong>Items:</strong> ';
+        for (let j = 0; j < inv.items.length; j++) {
+            if (j > 0) html += ', ';
+            html += inv.items[j].name + ' (x' + inv.items[j].quantity + ')';
+        }
+        html += '</div>';
+        html += '<div class="result-detail"><strong>Financials:</strong> Subtotal: $' + inv.subtotal.toFixed(2) + ' | Discount: $' + inv.discount.toFixed(2) + ' | Tax: $' + inv.taxes.toFixed(2) + ' | Total: $' + inv.totalCost.toFixed(2) + ' | Paid: $' + inv.amountPaid.toFixed(2) + '</div>';
+        html += '</div>';
+    }
+    
+    resultsDiv.innerHTML = html;
 }

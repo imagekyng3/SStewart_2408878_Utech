@@ -18,6 +18,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="products.html">Shop Now</a></li>
                     <li><a href="about.html">Contact</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
                 </ul>
             </nav>
         </div>
@@ -31,12 +32,25 @@
                     Your account has been locked after 3 incorrect TRN/password attempts.
                 </p>
                 <p>Please try again later, or use the Reset Password link on the home page.</p>
+                <p><strong>Note:</strong> Login attempts will be reset after you reset your password.</p>
                 <div class="auth-actions">
                     <button class="btn btn-primary" onclick="window.location.href='index.html'">Back to Home</button>
+                    <button class="btn btn-secondary" onclick="resetLoginAttempts()">Reset Login Attempts</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <script src="script.js"></script>
+    <script>
+        function resetLoginAttempts() {
+            if (confirm('This will reset your login attempts. You can try logging in again.')) {
+                localStorage.setItem('loginAttempts', '0');
+                alert('Login attempts have been reset. Please try logging in again.');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
 </body>
 </html>
 
