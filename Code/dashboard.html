@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Apex Technologies</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="sitename">
+                <h2><a href="index.html">APEX</a></h2>
+                <div class="subtitle">TECHNOLOGY SHOP</div>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop Now</a></li>
+                    <li><a href="about.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="about-section">
+        <div class="container">
+            <h1 class="section-title">Analytics Dashboard</h1>
+
+            <div class="about-content">
+                <div class="about-card">
+                    <h2>User Frequency</h2>
+                    <p>Frequency of registered users by gender and age group.</p>
+                    <div id="genderChart" class="freq-chart"></div>
+                    <div id="ageChart" class="freq-chart"></div>
+                </div>
+
+                <div class="about-card">
+                    <h2>Invoice Search</h2>
+                    <p>Use TRN to search invoices stored in <code>AllInvoices</code> or per user in <code>RegistrationData</code>. Results are displayed in the browser console using <code>console.log()</code>.</p>
+                    <div class="auth-form">
+                        <div class="form-group">
+                            <label for="invoiceSearchTrn">Tax Registration Number (TRN)</label>
+                            <input type="text" id="invoiceSearchTrn" placeholder="000-000-000">
+                        </div>
+                        <div class="auth-actions">
+                            <button class="btn btn-primary" onclick="ShowInvoices()">Show Invoices (AllInvoices)</button>
+                            <button class="btn btn-secondary" onclick="GetUserInvoices()">Get User Invoices (RegistrationData)</button>
+                        </div>
+                        <p>Open the browser console (F12 &gt; Console) to view the invoice data output.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Build frequency charts on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            ShowUserFrequency();
+        });
+    </script>
+</body>
+</html>
+
+

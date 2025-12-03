@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Apex Technologies</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="sitename">
+                <h2><a href="index.html">APEX</a></h2>
+                <div class="subtitle">TECHNOLOGY SHOP</div>
+            </div>
+            <nav>
+                <ul id="MenuItems">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Shop Now</a></li>
+                    <li><a href="about.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="container">
+            <h1 class="section-title">Invoice</h1>
+
+            <div class="checkout-container">
+                <div class="checkout-summary">
+                    <h2>Invoice Details</h2>
+                    <div id="invoiceHeader" class="checkout-totals"></div>
+                    <div id="invoiceShipping" class="checkout-totals"></div>
+                    <div id="invoiceTotals" class="checkout-totals"></div>
+                </div>
+
+                <div class="checkout-form-container">
+                    <h2>Purchased Items</h2>
+                    <div id="invoiceItems" class="checkout-items-list"></div>
+                    <div class="checkout-actions-summary">
+                        <button class="btn btn-primary" onclick="window.location.href='products.html'">Back to Shop</button>
+                        <button class="btn btn-outline" onclick="window.location.href='dashboard.html'">View Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        // Load the last generated invoice from localStorage and display it
+        document.addEventListener('DOMContentLoaded', function () {
+            const invoiceData = localStorage.getItem('lastInvoice');
+            if (!invoiceData) {
+                document.getElementById('invoiceHeader').innerHTML = '<p>No invoice found. Please complete a checkout first.</p>';
+                return;
+            }
+
+            const invoice = JSON.parse(invoiceData);
+
+            const headerDiv = document.getElementById('invoiceHeader');
+            const shippingDiv = document.getElementById('invoiceShipping');
+            const totalsDiv = document.getElementById('invoiceTotals');
+            const itemsDiv = document.getElementById('invoiceItems');
+
+            headerDiv.innerHTML =
+                '<div class="summary-item"><span>Company:</span><span>' + invoice.companyName + '</span></div>' +
+                '<div class="summary-item"><span>Invoice Number:</span><span>' + invoice.invoiceNumber + '</span></div>' +
+                '<div class="summary-item"><span>Date:</span><span>' + new Date(invoice.date).toLocaleString() + '</span></div>' +
+                '<div class="summary-item"><span>TRN:</span><span>' + invoice.trn + '</span></div>';
+
+            if (invoice.shippingInformation) {
+                shippingDiv.innerHTML =
+                    '<div class="summary-item"><span>Shipping Name:</span><span>' + invoice.shippingInformation.name + '</span></div>' +
+                    '<div class="summary-item"><span>Address:</span><span>' + invoice.shippingInformation.address + '</span></div>' +
+                    '<div class="summary-item"><span>City:</span><span>' + invoice.shippingInformation.city + '</span></div>' +
+                    '<div class="summary-item"><span>Postal Code:</span><span>' + invoice.shippingInformation.postal + '</span></div>';
+            }
+
+            totalsDiv.innerHTML =
+                '<div class="summary-item"><span>Subtotal:</span><span>$' + invoice.subtotal.toFixed(2) + '</span></div>' +
+                '<div class="summary-item"><span>Discount:</span><span>$' + invoice.discount.toFixed(2) + '</span></div>' +
+                '<div class="summary-item"><span>Tax:</span><span>$' + invoice.taxes.toFixed(2) + '</span></div>' +
+                '<div class="summary-item total"><span>Total Cost:</span><span>$' + invoice.totalCost.toFixed(2) + '</span></div>' +
+                '<div class="summary-item"><span>Amount Paid:</span><span>$' + invoice.amountPaid.toFixed(2) + '</span></div>';
+
+            itemsDiv.innerHTML = '';
+            if (Array.isArray(invoice.items) && invoice.items.length > 0) {
+                for (let i = 0; i < invoice.items.length; i++) {
+                    const item = invoice.items[i];
+                    const row = document.createElement('div');
+                    row.className = 'checkout-item';
+                    const itemTotal = item.price * item.quantity;
+                    row.innerHTML =
+                        '<div class="checkout-item-info"><h4>' + item.name + '</h4>' +
+                        '<p>Quantity: ' + item.quantity + ' × $' + item.price.toFixed(2) + '</p></div>' +
+                        '<div class="checkout-item-price">$' + itemTotal.toFixed(2) + '</div>';
+                    itemsDiv.appendChild(row);
+                }
+            } else {
+                itemsDiv.innerHTML = '<p>No items found on this invoice.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
+
+

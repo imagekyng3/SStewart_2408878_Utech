@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Apex Technologies</title>
-    <link rel="stylesheet" href="../code/style.css">
+    <link rel="stylesheet" href="../Code/style.css">
 </head>
 <body>
     <header>
         <div class="navbar">
             <div class="sitename">
-                <h2><a href="../code/index.html">APEX</a></h2>
+                <h2><a href="../Code/index.html">APEX</a></h2>
                 <div class="subtitle">TECHNOLOGY SHOP</div>
             </div>
             <nav>
                 <ul id="MenuItems">
-                    <li><a href="../code/index.html">Home</a></li>
-                    <li><a href="../code/products.html">Shop Now</a></li>
-                    <li><a href="../code/about.html">Contact</a></li>
+                    <li><a href="../Code/index.html">Home</a></li>
+                    <li><a href="../Code/products.html">Shop Now</a></li>
+                    <li><a href="../Code/about.html">Contact</a></li>
                 </ul>
             </nav>
         </div>
@@ -29,54 +29,89 @@
                 <h1>Register</h1>
                 <p class="auth-subtitle">Create your account to start shopping.</p>
                 
+                <!-- 
+                    IA#2 Group Project - Registration Form
+                    Fields: first name, last name, date of birth, gender, phone, email, TRN, password
+                    Data is stored in localStorage under the key "RegistrationData" as an array of objects.
+                -->
                 <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
-                        <span class="error-message" id="fullNameError"></span>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                            <span class="error-message" id="firstNameError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                            <span class="error-message" id="lastNameError"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" required>
+                            <span class="error-message" id="dobError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" class="gender-select" required>
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <span class="error-message" id="genderError"></span>
+                        </div>
                     </div>
                     
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                            <span class="error-message" id="phoneError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="dob">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" required>
-                        <span class="error-message" id="dobError"></span>
+                        <label for="trn">Tax Registration Number (TRN)</label>
+                        <input type="text" id="trn" name="trn" placeholder="000-000-000" required>
+                        <span class="error-message" id="trnError"></span>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                        <span class="error-message" id="emailError"></span>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Create a password" required>
+                            <span class="error-message" id="passwordError"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                            <span class="error-message" id="confirmPasswordError"></span>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
-                        <span class="error-message" id="usernameError"></span>
+                    <div class="auth-actions">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="reset" class="btn btn-secondary">Cancel</button>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a password" required>
-                        <span class="error-message" id="passwordError"></span>
+                    <div class="auth-links">
+                        <span>Already registered?</span>
+                        <a href="../Code/login.html">Go to Login</a>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                        <span class="error-message" id="confirmPasswordError"></span>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    
-                    <p class="auth-link">
-                        Already have an account? <a href="login.html">Login here</a>
-                    </p>
                 </form>
             </div>
         </div>
     </section>
 
-    <script src="../code/script.js"></script>
+    <script src="../Code/script.js"></script>
 </body>
 </html>
 

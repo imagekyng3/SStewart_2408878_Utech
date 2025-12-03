@@ -1,4 +1,11 @@
-// Product data array
+
+/*
+ * IA#2 Group Project - Apex Technologies
+ * Student: Sanjay Stewart (ID: 2408878)
+ * Course: Web Programming - Thursday 6-8pm
+ * Assignment: E-commerce Website with LocalStorage
+ */
+
 const products = [
     { id: 1, name: "Gaming Laptop Pro", category: "laptops", price: 1200, image: "../Asset/Laptops/1f887754176cb7628948f1a49f16045d.jpg", description: "High-performance gaming laptop with advanced graphics" },
     { id: 2, name: "Business Ultrabook", category: "laptops", price: 1500, image: "../Asset/Laptops/26073a8430872d83b52106e628b4d2d3.jpg", description: "Sleek and powerful ultrabook for professionals" },
@@ -19,8 +26,30 @@ const products = [
     { id: 17, name: "Premium Headphones", category: "headphones", price: 350, image: "../Asset/HeadPhones/head7-removebg-preview.png", description: "Top-tier headphones with exceptional audio quality" }
 ];
 
+// Save all products to localStorage once (for assignment requirement)
+if (!localStorage.getItem('AllProducts')) {
+    localStorage.setItem('AllProducts', JSON.stringify(products));
+}
+
 // Load cart from localStorage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+/*
+ * QUESTION 1 A - Calculate Age from Date of Birth
+ * Description: Helper function to calculate user age from DOB.
+ * Used to validate that users are 18+ years old during registration.
+ */
+function calculateAge(dobStr) {
+    if (!dobStr) return 0;
+    const dob = new Date(dobStr);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    return age;
+}
 
 // Update cart count display
 function updateCartCount() {
@@ -65,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setupCheckoutEventListeners();
     }
     
-    // Login form validation
+    // Login form validation (TRN + password)
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
@@ -84,109 +113,181 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Validate login form fields
+/*
+ * QUESTION 1 B - Login Form Validation
+ * Description: Validates login using TRN and password from RegistrationData localStorage.
+ * Allows 3 login attempts before redirecting to account-locked page.
+ * On success, redirects to products page.
+ */
 function validateLoginForm() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const usernameError = document.getElementById('usernameError');
-    const passwordError = document.getElementById('passwordError');
+    const trnInput = document.getElementById('loginTrn');
+    const passwordInput = document.getElementById('loginPassword');
+    const trnError = document.getElementById('loginTrnError');
+    const passwordError = document.getElementById('loginPasswordError');
+
+    if (!trnInput || !passwordInput || !trnError || !passwordError) {
+        return;
+    }
+
+    const trn = trnInput.value.trim();
+    const password = passwordInput.value;
     
     let isValid = true;
     
-    usernameError.textContent = '';
+    trnError.textContent = '';
     passwordError.textContent = '';
     
-    if (username === '') {
-        usernameError.textContent = 'Username is required';
+    // Very basic TRN format check
+    const trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (trn === '') {
+        trnError.textContent = 'TRN is required';
         isValid = false;
-    } else {
-        if (username.length < 3) {
-            usernameError.textContent = 'Username must be at least 3 characters';
-            isValid = false;
-        }
+    } else if (!trnPattern.test(trn)) {
+        trnError.textContent = 'TRN must be in the format 000-000-000';
+        isValid = false;
     }
     
     if (password === '') {
         passwordError.textContent = 'Password is required';
         isValid = false;
     } else {
-        if (password.length < 6) {
-            passwordError.textContent = 'Password must be at least 6 characters';
+        if (password.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters';
             isValid = false;
         }
     }
     
     if (isValid) {
-        // Get registered users from localStorage
-        const users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
-        
-        // Check if username exists and password matches
-        let userFound = false;
+        // Check login attempts
+        let attempts = parseInt(localStorage.getItem('loginAttempts') || '0', 10);
+        if (attempts >= 3) {
+            window.location.href = 'account-locked.html';
+            return;
+        }
+
+        // Get registered users from localStorage (RegistrationData)
+        const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+
         let authenticatedUser = null;
-        
         for (let i = 0; i < users.length; i++) {
-            if (users[i].username === username && users[i].password === password) {
-                userFound = true;
+            if (users[i].trn === trn && users[i].password === password) {
                 authenticatedUser = users[i];
                 break;
             }
         }
-        
-        if (userFound && authenticatedUser) {
-            // Store login status and user info in localStorage
+
+        if (authenticatedUser) {
+            // Reset attempts and store login status
+            localStorage.setItem('loginAttempts', '0');
             localStorage.setItem('userLoggedIn', 'true');
-            localStorage.setItem('username', username);
-            localStorage.setItem('userFullName', authenticatedUser.fullName);
+            localStorage.setItem('loggedInTrn', authenticatedUser.trn);
+            localStorage.setItem('userFullName', authenticatedUser.firstName + ' ' + authenticatedUser.lastName);
             localStorage.setItem('userEmail', authenticatedUser.email);
-            
-            alert('Login successful! Welcome back, ' + authenticatedUser.fullName + '!');
-            window.location.href = '../code/index.html';
+
+            alert('Login successful! Welcome back, ' + authenticatedUser.firstName + '!');
+            window.location.href = 'products.html';
         } else {
-            // Check if username exists but password is wrong
-            let usernameExists = false;
-            for (let i = 0; i < users.length; i++) {
-                if (users[i].username === username) {
-                    usernameExists = true;
-                    break;
-                }
-            }
-            
-            if (usernameExists) {
-                passwordError.textContent = 'Incorrect password. Please try again.';
+            attempts += 1;
+            localStorage.setItem('loginAttempts', attempts.toString());
+
+            if (attempts >= 3) {
+                alert('Your account has been locked after 3 failed attempts.');
+                window.location.href = 'account-locked.html';
             } else {
-                usernameError.textContent = 'Username not found. Please register first.';
+                passwordError.textContent = 'Invalid TRN or password. Attempt ' + attempts + ' of 3.';
             }
         }
     }
 }
 
-// Validate registration form (email, password match, age)
+/*
+ * QUESTION 1 B - Reset Password Function
+ * Description: Allows users to reset their password by entering their TRN.
+ * Updates the password in RegistrationData localStorage.
+ */
+function resetPassword() {
+    const trn = prompt('Enter your TRN to reset password (format 000-000-000):');
+    if (!trn) return;
+
+    const trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (!trnPattern.test(trn.trim())) {
+        alert('TRN must be in the format 000-000-000');
+        return;
+    }
+
+    const newPassword = prompt('Enter your new password (min 8 characters):');
+    if (!newPassword || newPassword.length < 8) {
+        alert('Password must be at least 8 characters.');
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+    let updated = false;
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].trn === trn.trim()) {
+            users[i].password = newPassword;
+            updated = true;
+            break;
+        }
+    }
+
+    if (updated) {
+        localStorage.setItem('RegistrationData', JSON.stringify(users));
+        alert('Password updated successfully.');
+    } else {
+        alert('No user found with that TRN.');
+    }
+}
+
+/*
+ * QUESTION 1 A - Registration Form Validation
+ * Description: Validates registration form with all required fields:
+ * - First name, last name, DOB, gender, phone, email, TRN, password
+ * - Validates age (must be 18+)
+ * - Validates TRN format (000-000-000) and uniqueness
+ * - Validates password (minimum 8 characters)
+ * - Stores user data in RegistrationData localStorage as array of objects
+ */
 function validateSignupForm() {
-    const fullName = document.getElementById('fullName').value.trim();
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
     const dob = document.getElementById('dob').value;
+    const gender = document.getElementById('gender').value;
+    const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
-    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
+    const trnInput = document.getElementById('trn');
     
-    const fullNameError = document.getElementById('fullNameError');
+    const firstNameError = document.getElementById('firstNameError');
+    const lastNameError = document.getElementById('lastNameError');
     const dobError = document.getElementById('dobError');
+    const genderError = document.getElementById('genderError');
+    const phoneError = document.getElementById('phoneError');
     const emailError = document.getElementById('emailError');
-    const usernameError = document.getElementById('usernameError');
+    const trnError = document.getElementById('trnError');
     const passwordError = document.getElementById('passwordError');
     const confirmPasswordError = document.getElementById('confirmPasswordError');
     
     let isValid = true;
     
-    fullNameError.textContent = '';
+    firstNameError.textContent = '';
+    lastNameError.textContent = '';
     dobError.textContent = '';
+    genderError.textContent = '';
+    phoneError.textContent = '';
     emailError.textContent = '';
-    usernameError.textContent = '';
+    trnError.textContent = '';
     passwordError.textContent = '';
     confirmPasswordError.textContent = '';
     
-    if (fullName === '') {
-        fullNameError.textContent = 'Full name is required';
+    if (firstName === '') {
+        firstNameError.textContent = 'First name is required';
+        isValid = false;
+    }
+    
+    if (lastName === '') {
+        lastNameError.textContent = 'Last name is required';
         isValid = false;
     }
     
@@ -194,13 +295,21 @@ function validateSignupForm() {
         dobError.textContent = 'Date of birth is required';
         isValid = false;
     } else {
-        const birthDate = new Date(dob);
-        const today = new Date();
-        const age = today.getFullYear() - birthDate.getFullYear();
-        if (age < 13) {
-            dobError.textContent = 'You must be at least 13 years old';
+        const age = calculateAge(dob);
+        if (age < 18) {
+            dobError.textContent = 'You must be at least 18 years old';
             isValid = false;
         }
+    }
+    
+    if (gender === '') {
+        genderError.textContent = 'Gender is required';
+        isValid = false;
+    }
+
+    if (phone === '') {
+        phoneError.textContent = 'Phone number is required';
+        isValid = false;
     }
     
     if (email === '') {
@@ -214,22 +323,22 @@ function validateSignupForm() {
         }
     }
     
-    if (username === '') {
-        usernameError.textContent = 'Username is required';
+    const trn = trnInput.value.trim();
+    const trnPattern = /^\d{3}-\d{3}-\d{3}$/;
+    if (trn === '') {
+        trnError.textContent = 'TRN is required';
         isValid = false;
-    } else {
-        if (username.length < 3) {
-            usernameError.textContent = 'Username must be at least 3 characters';
-            isValid = false;
-        }
+    } else if (!trnPattern.test(trn)) {
+        trnError.textContent = 'TRN must be in the format 000-000-000';
+        isValid = false;
     }
     
     if (password === '') {
         passwordError.textContent = 'Password is required';
         isValid = false;
     } else {
-        if (password.length < 6) {
-            passwordError.textContent = 'Password must be at least 6 characters';
+        if (password.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters';
             isValid = false;
         }
     }
@@ -245,41 +354,91 @@ function validateSignupForm() {
     }
     
     if (isValid) {
-        // Get existing users from localStorage
-        let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
+        // Get existing users from localStorage (RegistrationData)
+        let users = [];
+        try {
+            const storedUsers = localStorage.getItem('RegistrationData');
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+                if (!Array.isArray(users)) {
+                    users = [];
+                }
+            }
+        } catch (e) {
+            console.error('Error reading users from localStorage:', e);
+            users = [];
+        }
         
-        // Check if username already exists
-        let usernameExists = false;
+        // Check if TRN already exists
+        let trnExists = false;
+        let emailExists = false;
         for (let i = 0; i < users.length; i++) {
-            if (users[i].username === username) {
-                usernameExists = true;
+            if (users[i].trn && users[i].trn === trn) {
+                trnExists = true;
+            }
+            if (users[i].email && users[i].email.toLowerCase() === email.toLowerCase()) {
+                emailExists = true;
+            }
+            if (trnExists && emailExists) {
                 break;
             }
         }
         
-        if (usernameExists) {
-            usernameError.textContent = 'Username already exists. Please choose another.';
+        if (trnExists) {
+            trnError.textContent = 'This TRN is already registered.';
             isValid = false;
-        } else {
+        }
+        
+        if (emailExists) {
+            emailError.textContent = 'Email already registered. Please use another email.';
+            isValid = false;
+        }
+        
+        if (isValid) {
             // Store user data in localStorage
             const userData = {
-                fullName: fullName,
+                firstName: firstName,
+                lastName: lastName,
+                dob: dob,
+                gender: gender,
+                phone: phone,
                 email: email,
-                username: username,
+                trn: trn,
                 password: password,
-                dob: dob
+                dateOfRegistration: new Date().toISOString(),
+                cart: {},
+                invoices: []
             };
             
             users.push(userData);
-            localStorage.setItem('registeredUsers', JSON.stringify(users));
             
-            alert('Registration successful! Redirecting to login...');
-            window.location.href = 'login.html';
+            try {
+                // Save users to localStorage
+                localStorage.setItem('RegistrationData', JSON.stringify(users));
+                
+                // Automatically log in the user after successful registration
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('loggedInTrn', trn);
+                localStorage.setItem('userFullName', firstName + ' ' + lastName);
+                localStorage.setItem('userEmail', email);
+                
+                alert('Registration successful! You are now logged in. Welcome, ' + firstName + '!');
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('Error saving user data:', error);
+                alert('Error saving your account. Please try again. If the problem persists, check your browser settings for localStorage.');
+            }
         }
     }
 }
 
-// Display products by category
+/*
+ * QUESTION 2 - Display Product Catalogue
+ * Description: Dynamically loads and displays products from the products array.
+ * Supports category filtering (all, laptops, headphones).
+ * Products are stored in AllProducts localStorage.
+ */
 function loadProducts(category) {
     const productGrid = document.getElementById('productGrid');
     if (!productGrid) {
@@ -335,8 +494,24 @@ function setupCategoryFilters() {
     }
 }
 
-// Add product to cart
+/*
+ * QUESTION 2 E / QUESTION 3 - Add Product to Cart
+ * Description: Adds selected product to shopping cart.
+ * Requires user login before adding items.
+ * Updates cart in localStorage and displays cart count.
+ */
 function addToCart(productId) {
+    // Require login before adding items
+    const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+    if (!isLoggedIn) {
+        alert('Please login or register before adding items to your cart.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Reload cart from localStorage to ensure we have the latest data
+    cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
     let product = null;
     for (let i = 0; i < products.length; i++) {
         if (products[i].id === productId) {
@@ -346,6 +521,7 @@ function addToCart(productId) {
     }
     
     if (!product) {
+        alert('Product not found!');
         return;
     }
     
@@ -369,12 +545,17 @@ function addToCart(productId) {
         });
     }
     
+    // Save updated cart to localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     alert(product.name + ' added to cart!');
 }
 
-// Display cart items
+/*
+ * QUESTION 3 - Display Shopping Cart Items
+ * Description: Loads and displays all items in the shopping cart.
+ * Shows product details, quantity, subtotal, discount, tax, and total.
+ */
 function loadCart() {
     const cartItems = document.getElementById('cartItems');
     if (!cartItems) {
@@ -401,7 +582,11 @@ function loadCart() {
     updateCartSummary();
 }
 
-// Calculate and display cart totals (subtotal, discount, tax, total)
+/*
+ * QUESTION 3 - Calculate Cart Summary
+ * Description: Calculates and displays cart totals:
+ * - Subtotal, Discount (10%), Tax (15%), Total Cost
+ */
 function updateCartSummary() {
     let subtotal = 0;
     for (let i = 0; i < cart.length; i++) {
@@ -544,7 +729,11 @@ function setupCartEventListeners() {
     }
 }
 
-// Load checkout page
+/*
+ * QUESTION 4 - Load Checkout Page
+ * Description: Initializes checkout page with cart items and summary.
+ * Redirects to products if cart is empty.
+ */
 function loadCheckout() {
     if (cart.length === 0) {
         alert('Your cart is empty! Redirecting to products...');
@@ -556,7 +745,7 @@ function loadCheckout() {
     updateCheckoutSummary();
 }
 
-// Display checkout items list
+// Q4: show checkout items
 function loadCheckoutItems() {
     const checkoutItems = document.getElementById('checkoutItems');
     if (!checkoutItems) {
@@ -575,7 +764,7 @@ function loadCheckoutItems() {
     }
 }
 
-// Calculate and display checkout totals
+// Q4: show checkout totals
 function updateCheckoutSummary() {
     let subtotal = 0;
     for (let i = 0; i < cart.length; i++) {
@@ -606,7 +795,7 @@ function updateCheckoutSummary() {
     }
 }
 
-// Setup checkout page button handlers
+// Q4: checkout buttons
 function setupCheckoutEventListeners() {
     const checkoutForm = document.getElementById('checkoutForm');
     const clearAllBtn = document.getElementById('clearAllBtn');
@@ -643,7 +832,12 @@ function setupCheckoutEventListeners() {
     }
 }
 
-// Validate checkout shipping details and payment
+/*
+ * QUESTION 4 / QUESTION 5 - Validate Checkout and Generate Invoice
+ * Description: Validates shipping details and payment amount.
+ * Generates invoice on successful validation.
+ * Clears cart and redirects to invoice page.
+ */
 function validateCheckoutForm() {
     const shippingName = document.getElementById('shippingName').value.trim();
     const shippingAddress = document.getElementById('shippingAddress').value.trim();
@@ -706,11 +900,207 @@ function validateCheckoutForm() {
     }
     
     if (isValid) {
-        alert('Order confirmed! Thank you for your purchase.');
+        // Build shipping info object
+        const shippingInfo = {
+            name: shippingName,
+            address: shippingAddress,
+            city: shippingCity,
+            postal: shippingPostal
+        };
+
+        // Generate and store invoice
+        const invoice = generateInvoice(shippingInfo, paymentAmount);
+
+        // Save last invoice separately for display
+        localStorage.setItem('lastInvoice', JSON.stringify(invoice));
+
+        alert('Order confirmed! Your invoice has been generated and sent to your email.');
         cart = [];
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCount();
-        window.location.href = 'index.html';
+        window.location.href = 'invoice.html';
     }
 }
 
+/*
+ * QUESTION 5 - Generate Invoice
+ * Description: Creates invoice with company name, date, invoice number, TRN,
+ * shipping information, purchased items, taxes, subtotal, and total cost.
+ * Saves invoice to:
+ * 1. AllInvoices localStorage (array of all invoices)
+ * 2. User's invoices array in RegistrationData
+ */
+function generateInvoice(shippingInfo, paymentAmount) {
+    const loggedInTrn = localStorage.getItem('loggedInTrn') || '';
+
+    let subtotal = 0;
+    for (let i = 0; i < cart.length; i++) {
+        subtotal = subtotal + (cart[i].price * cart[i].quantity);
+    }
+
+    const discount = subtotal * 0.10;
+    const afterDiscount = subtotal - discount;
+    const tax = afterDiscount * 0.15;
+    const total = afterDiscount + tax;
+
+    const invoice = {
+        companyName: 'Apex Technologies',
+        date: new Date().toISOString(),
+        invoiceNumber: 'INV-' + Date.now(),
+        trn: loggedInTrn,
+        shippingInformation: shippingInfo,
+        items: cart.map(function (item) {
+            return {
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price
+            };
+        }),
+        discount: discount,
+        taxes: tax,
+        subtotal: subtotal,
+        totalCost: total,
+        amountPaid: paymentAmount
+    };
+
+    // Append to AllInvoices
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+    allInvoices.push(invoice);
+    localStorage.setItem('AllInvoices', JSON.stringify(allInvoices));
+
+    // Append to this user's invoices inside RegistrationData
+    const regData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+    for (let i = 0; i < regData.length; i++) {
+        if (regData[i].trn === loggedInTrn) {
+            if (!Array.isArray(regData[i].invoices)) {
+                regData[i].invoices = [];
+            }
+            regData[i].invoices.push(invoice);
+            break;
+        }
+    }
+    localStorage.setItem('RegistrationData', JSON.stringify(regData));
+
+    return invoice;
+}
+
+/*
+ * QUESTION 6 A - Show User Frequency by Gender and Age Group
+ * Description: Displays bar charts showing:
+ * 1. User frequency by gender (Male, Female, Other)
+ * 2. User frequency by age group (18-25, 26-35, 36-50, 50+)
+ * Uses image width manipulation to create horizontal bar charts.
+ */
+function ShowUserFrequency() {
+    const regData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+
+    const genderCounts = { Male: 0, Female: 0, Other: 0 };
+    const ageCounts = { '18-25': 0, '26-35': 0, '36-50': 0, '50+': 0 };
+
+    for (let i = 0; i < regData.length; i++) {
+        const user = regData[i];
+        const g = user.gender || 'Other';
+        if (genderCounts[g] !== undefined) {
+            genderCounts[g] = genderCounts[g] + 1;
+        } else {
+            genderCounts.Other = genderCounts.Other + 1;
+        }
+
+        const age = calculateAge(user.dob);
+        if (age >= 18 && age <= 25) {
+            ageCounts['18-25'] = ageCounts['18-25'] + 1;
+        } else if (age >= 26 && age <= 35) {
+            ageCounts['26-35'] = ageCounts['26-35'] + 1;
+        } else if (age >= 36 && age <= 50) {
+            ageCounts['36-50'] = ageCounts['36-50'] + 1;
+        } else if (age > 50) {
+            ageCounts['50+'] = ageCounts['50+'] + 1;
+        }
+    }
+
+    const genderContainer = document.getElementById('genderChart');
+    const ageContainer = document.getElementById('ageChart');
+    if (!genderContainer || !ageContainer) {
+        return;
+    }
+
+    const barUnit = 40; // pixels per user
+    const barImagePath = '../Asset/HeadPhones/head6-removebg-preview.png';
+
+    genderContainer.innerHTML = '';
+    ageContainer.innerHTML = '';
+
+    // Build gender chart
+    for (const key in genderCounts) {
+        if (Object.prototype.hasOwnProperty.call(genderCounts, key)) {
+            const count = genderCounts[key];
+            const width = Math.max(count * barUnit, 5);
+            genderContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + key + ' (' + count + ')</span><img src="' + barImagePath + '" width="' + width + 'px" alt="bar"></div>';
+        }
+    }
+
+    // Build age-group chart
+    for (const range in ageCounts) {
+        if (Object.prototype.hasOwnProperty.call(ageCounts, range)) {
+            const count = ageCounts[range];
+            const width = Math.max(count * barUnit, 5);
+            ageContainer.innerHTML += '<div class="freq-row"><span class="freq-label">' + range + ' (' + count + ')</span><img src="' + barImagePath + '" width="' + width + 'px" alt="bar"></div>';
+        }
+    }
+}
+
+/*
+ * QUESTION 6 B - Show All Invoices (AllInvoices)
+ * Description: Searches and displays all invoices from AllInvoices localStorage.
+ * Can filter by TRN or show all invoices.
+ * Results are displayed in browser console using console.log().
+ */
+function ShowInvoices() {
+    const trnInput = document.getElementById('invoiceSearchTrn');
+    const trn = trnInput ? trnInput.value.trim() : '';
+    const allInvoices = JSON.parse(localStorage.getItem('AllInvoices')) || [];
+
+    if (trn === '') {
+        console.log('All invoices:', allInvoices);
+    } else {
+        const filtered = [];
+        for (let i = 0; i < allInvoices.length; i++) {
+            if (allInvoices[i].trn === trn) {
+                filtered.push(allInvoices[i]);
+            }
+        }
+        console.log('Invoices for TRN ' + trn + ':', filtered);
+    }
+}
+
+/*
+ * QUESTION 6 C - Get User Invoices from RegistrationData
+ * Description: Retrieves and displays invoices for a specific user by TRN.
+ * Searches RegistrationData and displays user's invoices array.
+ * Results are displayed in browser console using console.log().
+ */
+function GetUserInvoices() {
+    const trnInput = document.getElementById('invoiceSearchTrn');
+    if (!trnInput) {
+        console.log('No TRN input found on this page.');
+        return;
+    }
+
+    const trn = trnInput.value.trim();
+    const regData = JSON.parse(localStorage.getItem('RegistrationData')) || [];
+    let foundUser = null;
+
+    for (let i = 0; i < regData.length; i++) {
+        if (regData[i].trn === trn) {
+            foundUser = regData[i];
+            break;
+        }
+    }
+
+    if (!foundUser) {
+        console.log('No user found for TRN ' + trn);
+        return;
+    }
+
+    console.log('Invoices for TRN ' + trn + ' from RegistrationData:', foundUser.invoices || []);
+}
