@@ -7,7 +7,7 @@ Simple e-commerce website built with HTML5, CSS3, JavaScript and localStorage.
 1. Sanjay Stewart (ID: 2408878)
 2. Rihanna Simpson (ID: 2403226)
 3. Neila Jamieson (ID: 2007748)
-4. Stefane Allen
+4. Stefane Allen (ID: 2306821)
 
 Course: Web Programming - Thursday 6-8 pm  
 Company Name: Apex Technologies
@@ -71,8 +71,15 @@ Q6 - Statistics
 
 ```
 2408878_IA2_S1AY26/
-├── Auth/
-│   └── signup.html          # Registration page
+├── Asset/
+│   ├── HeadPhones/         # Headphone product images
+│   └── Laptops/            # Laptop product images
+├── StoryBoard/             # Project wireframes and design mockups
+│   ├── Contact-1.png       # Contact page wireframe
+│   ├── Contact.png         # Alternative contact page wireframe
+│   ├── HomePage.png        # Home page wireframe
+│   ├── Shop.png            # Shop/products page wireframe
+│   └── SignUp.png          # Sign up page wireframe
 ├── code/
 │   ├── about.html           # Contact/About page
 │   ├── account-locked.html  # Account locked error page
@@ -91,10 +98,10 @@ Q6 - Statistics
 
 ## Group Members
 
-1. Sanjay Stewart (ID: 2408878) - SANJAYSTEWART@students.utech.edu.jm
+1. Sanjay Stewart (ID: 2408878) 
 2. Rihanna Simpson (ID: 2403226)
 3. Neila Jamieson (ID: 2007748)
-4. Stefane Allen
+4. Stefane Allen (ID: 2306821)
 
 Course: Web Programming - Thursday 6-8 pm  
 Company Name: Apex Technologies
