@@ -41,6 +41,7 @@
                     <div id="invoiceItems" class="checkout-items-list"></div>
                     <div class="checkout-actions-summary">
                         <button class="btn btn-primary" onclick="window.location.href='products.html'">Back to Shop</button>
+                        <button class="btn btn-secondary" onclick="sendInvoiceToEmail()">Send to Email</button>
                         <button class="btn btn-outline" onclick="window.location.href='dashboard.html'">View Dashboard</button>
                     </div>
                 </div>
@@ -103,6 +104,56 @@
                 itemsDiv.innerHTML = '<p>No items found on this invoice.</p>';
             }
         });
+        
+        // Function to send invoice to email
+        function sendInvoiceToEmail() {
+            const invoiceData = localStorage.getItem('lastInvoice');
+            if (!invoiceData) {
+                alert('No invoice found. Please complete a checkout first.');
+                return;
+            }
+            
+            const invoice = JSON.parse(invoiceData);
+            const userEmail = localStorage.getItem('userEmail') || '';
+            
+            // Create email content
+            let emailBody = 'Thank you for your purchase!\n\n';
+            emailBody += '=== INVOICE DETAILS ===\n';
+            emailBody += 'Company: ' + invoice.companyName + '\n';
+            emailBody += 'Invoice Number: ' + invoice.invoiceNumber + '\n';
+            emailBody += 'Date: ' + new Date(invoice.date).toLocaleString() + '\n';
+            emailBody += 'TRN: ' + invoice.trn + '\n\n';
+            
+            if (invoice.shippingInformation) {
+                emailBody += '=== SHIPPING INFORMATION ===\n';
+                emailBody += 'Name: ' + invoice.shippingInformation.name + '\n';
+                emailBody += 'Address: ' + invoice.shippingInformation.address + '\n';
+                emailBody += 'City: ' + invoice.shippingInformation.city + '\n';
+                emailBody += 'Postal Code: ' + invoice.shippingInformation.postal + '\n\n';
+            }
+            
+            emailBody += '=== PURCHASED ITEMS ===\n';
+            for (let i = 0; i < invoice.items.length; i++) {
+                const item = invoice.items[i];
+                emailBody += item.name + ' (x' + item.quantity + ') @ $' + item.price.toFixed(2) + ' = $' + (item.price * item.quantity).toFixed(2) + '\n';
+            }
+            
+            emailBody += '\n=== FINANCIAL SUMMARY ===\n';
+            emailBody += 'Subtotal: $' + invoice.subtotal.toFixed(2) + '\n';
+            emailBody += 'Discount: $' + invoice.discount.toFixed(2) + '\n';
+            emailBody += 'Tax: $' + invoice.taxes.toFixed(2) + '\n';
+            emailBody += 'Total Cost: $' + invoice.totalCost.toFixed(2) + '\n';
+            emailBody += 'Amount Paid: $' + invoice.amountPaid.toFixed(2) + '\n';
+            
+            // Encode for URL
+            const subject = encodeURIComponent('Invoice ' + invoice.invoiceNumber + ' from Apex Technologies');
+            const body = encodeURIComponent(emailBody);
+            
+            // Open default email client
+            window.location.href = 'mailto:' + userEmail + '?subject=' + subject + '&body=' + body;
+            
+            alert('Opening your email client to send invoice. Please click "Send" in your email application.');
+        }
     </script>
 </body>
 </html>

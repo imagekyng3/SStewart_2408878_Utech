@@ -105,6 +105,24 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             validateLoginForm();
         });
+        
+        // Clear error messages when user starts typing in login form
+        const loginTrnInput = document.getElementById('loginTrn');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        
+        if (loginTrnInput) {
+            loginTrnInput.addEventListener('input', function() {
+                const trnError = document.getElementById('loginTrnError');
+                if (trnError) trnError.textContent = '';
+            });
+        }
+        
+        if (loginPasswordInput) {
+            loginPasswordInput.addEventListener('input', function() {
+                const passwordError = document.getElementById('loginPasswordError');
+                if (passwordError) passwordError.textContent = '';
+            });
+        }
     }
     
     // Registration form validation
@@ -114,6 +132,80 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             validateSignupForm();
         });
+        
+        // Clear error messages when user starts typing in registration form
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const trnRegInput = document.getElementById('trn');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const dobInput = document.getElementById('dob');
+        const genderInput = document.getElementById('gender');
+        const phoneInput = document.getElementById('phone');
+        const emailInput = document.getElementById('email');
+        
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const passwordError = document.getElementById('passwordError');
+                if (passwordError) passwordError.textContent = '';
+            });
+        }
+        
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', function() {
+                const confirmPasswordError = document.getElementById('confirmPasswordError');
+                if (confirmPasswordError) confirmPasswordError.textContent = '';
+            });
+        }
+        
+        if (trnRegInput) {
+            trnRegInput.addEventListener('input', function() {
+                const trnError = document.getElementById('trnError');
+                if (trnError) trnError.textContent = '';
+            });
+        }
+        
+        if (firstNameInput) {
+            firstNameInput.addEventListener('input', function() {
+                const firstNameError = document.getElementById('firstNameError');
+                if (firstNameError) firstNameError.textContent = '';
+            });
+        }
+        
+        if (lastNameInput) {
+            lastNameInput.addEventListener('input', function() {
+                const lastNameError = document.getElementById('lastNameError');
+                if (lastNameError) lastNameError.textContent = '';
+            });
+        }
+        
+        if (dobInput) {
+            dobInput.addEventListener('input', function() {
+                const dobError = document.getElementById('dobError');
+                if (dobError) dobError.textContent = '';
+            });
+        }
+        
+        if (genderInput) {
+            genderInput.addEventListener('change', function() {
+                const genderError = document.getElementById('genderError');
+                if (genderError) genderError.textContent = '';
+            });
+        }
+        
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                const phoneError = document.getElementById('phoneError');
+                if (phoneError) phoneError.textContent = '';
+            });
+        }
+        
+        if (emailInput) {
+            emailInput.addEventListener('input', function() {
+                const emailError = document.getElementById('emailError');
+                if (emailError) emailError.textContent = '';
+            });
+        }
     }
 });
 

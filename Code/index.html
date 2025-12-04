@@ -99,42 +99,6 @@
         </div>
     </section>
 
-    <!-- Simple Login Section using existing auth styling -->
-    <section class="auth-section">
-        <div class="auth-container">
-            <div class="auth-card">
-                <h2>Member Login</h2>
-                <p class="auth-subtitle">Sign in with your TRN and password.</p>
-                <!-- 
-                    IA#2 Group Project - Login Form
-                    Uses TRN and password to authenticate against localStorage key "RegistrationData".
-                    Allows 3 attempts before redirecting to an account locked page.
-                -->
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="loginTrn">Tax Registration Number (TRN)</label>
-                        <input type="text" id="loginTrn" name="loginTrn" placeholder="000-000-000" required>
-                        <span class="error-message" id="loginTrnError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" name="loginPassword" placeholder="Enter your password" required>
-                        <span class="error-message" id="loginPasswordError"></span>
-                    </div>
-                    <div class="auth-actions">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <button type="reset" class="btn btn-secondary">Cancel</button>
-                    </div>
-                    <div class="auth-links">
-                        <a href="signup.html">Need an account? Register</a>
-                        <!-- Reset Password is a simple prompt-based flow handled in script.js -->
-                        <a href="#" onclick="resetPassword(); return false;">Reset Password</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-
     <script src="script.js"></script>
     <script>
         // Check login status and show/hide login/logout buttons
