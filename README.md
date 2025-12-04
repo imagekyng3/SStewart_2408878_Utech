@@ -1,17 +1,17 @@
-# Apex Technologies - IA#2 Group Project
+# Apex Technologies - Group Project
 
 Simple e-commerce website built with HTML5, CSS3, JavaScript and localStorage.
 
 ## Group Members
 
 1. Sanjay Stewart (ID: 2408878)
-2. Rihanna Simpson
-3. Neila Jamieson
+2. Rihanna Simpson (ID: 2403226)
+3. Neila Jamieson (ID: 2007748)
 4. Stefane Allen
 
 Course: Web Programming - Thursday 6-8 pm  
 Company Name: Apex Technologies
-Assignment: IA#2 - E-commerce Website
+Assignment: Group Project - E-commerce Website
 
 ## How to Run
 
@@ -92,8 +92,8 @@ Q6 - Statistics
 ## Group Members
 
 1. Sanjay Stewart (ID: 2408878) - SANJAYSTEWART@students.utech.edu.jm
-2. Rihanna Simpson
-3. Neila Jamieson
+2. Rihanna Simpson (ID: 2403226)
+3. Neila Jamieson (ID: 2007748)
 4. Stefane Allen
 
 Course: Web Programming - Thursday 6-8 pm  

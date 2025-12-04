@@ -1,10 +1,10 @@
 
 /*
- * IA#2 Group Project - Apex Technologies
+ * Group Project - Apex Technologies
  * Group Members:
  * - Sanjay Stewart (ID: 2408878)
- * - Rihanna Simpson
- * - Neila Jamieson
+ * - Rihanna Simpson (ID: 2403226)
+ * - Neila Jamieson (ID: 2007748)
  * - Stefane Allen
  * Course: Web Programming - Thursday 6-8pm
  * Assignment: E-commerce Website with LocalStorage
@@ -842,7 +842,7 @@ function loadCheckout() {
     updateCheckoutSummary();
 }
 
-// Q4: show checkout items
+// Show checkout items
 function loadCheckoutItems() {
     const checkoutItems = document.getElementById('checkoutItems');
     if (!checkoutItems) {
@@ -861,7 +861,7 @@ function loadCheckoutItems() {
     }
 }
 
-// Q4: show checkout totals
+// Show checkout totals
 function updateCheckoutSummary() {
     let subtotal = 0;
     for (let i = 0; i < cart.length; i++) {
@@ -892,7 +892,7 @@ function updateCheckoutSummary() {
     }
 }
 
-// Q4: checkout buttons
+// Checkout buttons
 function setupCheckoutEventListeners() {
     const checkoutForm = document.getElementById('checkoutForm');
     const clearAllBtn = document.getElementById('clearAllBtn');
